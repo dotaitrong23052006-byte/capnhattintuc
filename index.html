@@ -5,332 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tin Tức Hàng Ngày</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <style>
-        /* Reset CSS */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        /* Header */
-        header {
-            background-color: #1a73e8;
-            color: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
-        
-        nav ul {
-            display: flex;
-            list-style: none;
-        }
-        
-        nav ul li {
-            margin-left: 1.5rem;
-        }
-        
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        
-        nav ul li a:hover {
-            color: #e8f0fe;
-        }
-        
-        /* Main Content */
-        .main-content {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-        
-        /* Featured News */
-        .featured-news {
-            margin-bottom: 2rem;
-        }
-        
-        .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #1a73e8;
-        }
-        
-        .featured-article {
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 1.5rem;
-        }
-        
-        .featured-img {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-        }
-        
-        .featured-content {
-            padding: 1.5rem;
-        }
-        
-        .featured-title {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .featured-title a {
-            color: #333;
-            text-decoration: none;
-        }
-        
-        .featured-title a:hover {
-            color: #1a73e8;
-        }
-        
-        .featured-meta {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-        
-        .featured-excerpt {
-            margin-bottom: 1rem;
-        }
-        
-        .read-more {
-            display: inline-block;
-            background-color: #1a73e8;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-        
-        .read-more:hover {
-            background-color: #0d62d9;
-        }
-        
-        /* News Grid */
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .news-card {
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        
-        .news-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .news-img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-        
-        .news-content {
-            padding: 1rem;
-        }
-        
-        .news-title {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .news-title a {
-            color: #333;
-            text-decoration: none;
-        }
-        
-        .news-title a:hover {
-            color: #1a73e8;
-        }
-        
-        .news-meta {
-            color: #666;
-            font-size: 0.8rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        /* Sidebar */
-        .sidebar {
-            background-color: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .sidebar-section {
-            margin-bottom: 2rem;
-        }
-        
-        .sidebar-title {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .category-list {
-            list-style: none;
-        }
-        
-        .category-list li {
-            margin-bottom: 0.5rem;
-        }
-        
-        .category-list a {
-            color: #333;
-            text-decoration: none;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .category-list a:hover {
-            color: #1a73e8;
-        }
-        
-        .trending-list {
-            list-style: none;
-        }
-        
-        .trending-list li {
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .trending-list li:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-        
-        .trending-title {
-            font-size: 0.95rem;
-            margin-bottom: 0.3rem;
-        }
-        
-        .trending-title a {
-            color: #333;
-            text-decoration: none;
-        }
-        
-        .trending-title a:hover {
-            color: #1a73e8;
-        }
-        
-        .trending-meta {
-            color: #666;
-            font-size: 0.8rem;
-        }
-        
-        /* Footer */
-        footer {
-            background-color: #333;
-            color: white;
-            padding: 2rem 0;
-            margin-top: 2rem;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-        }
-        
-        .footer-section h3 {
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-        
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 0.5rem;
-        }
-        
-        .footer-links a {
-            color: #ddd;
-            text-decoration: none;
-        }
-        
-        .footer-links a:hover {
-            color: white;
-        }
-        
-        .copyright {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid #555;
-            color: #aaa;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            nav ul {
-                margin-top: 1rem;
-            }
-            
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .news-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <!-- Header -->
@@ -340,20 +15,20 @@
                 <div class="logo">Tin Tức Hàng Ngày</div>
                 <nav>
                     <ul>
-                        <li><a href="#">Trang chủ</a></li>
-                        <li><a href="#">Thời sự</a></li>
-                        <li><a href="#">Kinh tế</a></li>
-                        <li><a href="#">Thể thao</a></li>
-                        <li><a href="#">Giải trí</a></li>
-                        <li><a href="#">Công nghệ</a></li>
+                        <li><a href="#" onclick="showHomePage()">Trang chủ</a></li>
+                        <li><a href="#" onclick="showCategoryPage('thoi-su')">Thời sự</a></li>
+                        <li><a href="#" onclick="showCategoryPage('kinh-te')">Kinh tế</a></li>
+                        <li><a href="#" onclick="showCategoryPage('the-thao')">Thể thao</a></li>
+                        <li><a href="#" onclick="showCategoryPage('giai-tri')">Giải trí</a></li>
+                        <li><a href="#" onclick="showCategoryPage('cong-nghe')">Công nghệ</a></li>
                     </ul>
                 </nav>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="container">
+    <!-- Home Page -->
+    <div id="home-page" class="container">
         <div class="main-content">
             <!-- Main News Section -->
             <div class="main-news">
@@ -361,11 +36,12 @@
                 <section class="featured-news">
                     <h2 class="section-title">Tin nổi bật</h2>
                     <div class="featured-article">
-                        <img src="https://via.placeholder.com/800x400" alt="Tin tức nổi bật" class="featured-img">
+                        <!-- THAY ẢNH BÃO SỐ 11 TẠI ĐÂY -->
+                        <img src="ảnh/ảnh 5.jpg" alt="Bão số 11-tiền phong" class="featured-img">
                         <div class="featured-content">
-                            <h3 class="featured-title"><a href="#">Tiêu đề bài viết nổi bật sẽ được hiển thị tại đây</a></h3>
-                            <div class="featured-meta">Ngày đăng: 15/10/2023 | Tác giả: Admin | Chuyên mục: Thời sự</div>
-                            <p class="featured-excerpt">Tóm tắt ngắn gọn về nội dung bài viết sẽ được hiển thị tại đây. Đây là phần mô tả giúp người đọc có cái nhìn tổng quan về bài viết trước khi quyết định đọc toàn bộ nội dung.</p>
+                            <h3 class="featured-title"><a href="#">Bão số 11 tiến vào Biển Đông, các tỉnh miền Trung khẩn trương ứng phó</a></h3>
+                            <div class="featured-meta">Ngày đăng: 7/10/2025 | Tác giả: Admin | Chuyên mục: Thời sự</div>
+                            <p class="featured-excerpt">Bão số 11 với sức gió mạnh nhất cấp 12, giật cấp 15 đang di chuyển nhanh vào Biển Đông. Các tỉnh từ Quảng Ninh đến Quảng Ngãi được cảnh báo sẽ chịu ảnh hưởng trực tiếp trong 48 giờ tới. Chính quyền các địa phương đang khẩn trương triển khai các biện pháp ứng phó, sẵn sàng sơ tán người dân vùng trũng thấp.</p>
                             <a href="#" class="read-more">Đọc tiếp</a>
                         </div>
                     </div>
@@ -377,61 +53,67 @@
                     <div class="news-grid">
                         <!-- News Card 1 -->
                         <div class="news-card">
-                            <img src="https://via.placeholder.com/400x250" alt="Tin tức 1" class="news-img">
+                            <!-- THAY ẢNH DI DỜI DÂN TẠI ĐÂY -->
+                            <img src="ảnh/ảnh 3.jpg" alt="dời dân"  class="news-img">
                             <div class="news-content">
-                                <h3 class="news-title"><a href="#">Tiêu đề tin tức số 1 sẽ được hiển thị tại đây</a></h3>
-                                <div class="news-meta">15/10/2023 | Thời sự</div>
-                                <p>Mô tả ngắn về tin tức này sẽ được hiển thị tại đây.</p>
+                                <h3 class="news-title"><a href="#">Khẩn trương di dời người dân vùng nguy cơ cao do bão số 11</a></h3>
+                                <div class="news-meta">7/10/2025 | Thời sự</div>
+                                <p>Lực lượng chức năng đang tích cực hỗ trợ di dời người dân tại các khu vực có nguy cơ ngập lụt, sạt lở đất do ảnh hưởng của bão số 11.</p>
                             </div>
                         </div>
 
                         <!-- News Card 2 -->
                         <div class="news-card">
-                            <img src="https://via.placeholder.com/400x250" alt="Tin tức 2" class="news-img">
+                            <!-- THAY ẢNH KINH TẾ TẠI ĐÂY -->
+                            <img src="ảnh/ảnh 4.jpg" alt="Ảnh hưởng kinh tế" class="news-img">
                             <div class="news-content">
-                                <h3 class="news-title"><a href="#">Tiêu đề tin tức số 2 sẽ được hiển thị tại đây</a></h3>
-                                <div class="news-meta">15/10/2023 | Kinh tế</div>
-                                <p>Mô tả ngắn về tin tức này sẽ được hiển thị tại đây.</p>
+                                <h3 class="news-title"><a href="#">Bão số 11 có thể gây thiệt hại lớn cho ngành thủy sản và nông nghiệp</a></h3>
+                                <div class="news-meta">7/10/2025 | Kinh tế</div>
+                                <p>Các chuyên gia cảnh báo bão số 11 có thể gây thiệt hại nặng nề cho ngành thủy sản và nông nghiệp các tỉnh miền Trung.</p>
                             </div>
                         </div>
 
                         <!-- News Card 3 -->
                         <div class="news-card">
-                            <img src="https://via.placeholder.com/400x250" alt="Tin tức 3" class="news-img">
+                            <!-- THAY ẢNH THỂ THAO TẠI ĐÂY -->
+                            <img src="ảnh/ảnh 6.jpg" alt="Thể thao" class="news-img">
                             <div class="news-content">
-                                <h3 class="news-title"><a href="#">Tiêu đề tin tức số 3 sẽ được hiển thị tại đây</a></h3>
-                                <div class="news-meta">14/10/2023 | Thể thao</div>
-                                <p>Mô tả ngắn về tin tức này sẽ được hiển thị tại đây.</p>
+                                <h3 class="news-title"><a href="#">Nhiều trận đấu thể thao bị hoãn do ảnh hưởng của bão số 11</a></h3>
+                                <div class="news-meta">6/10/2025 | Thể thao</div>
+                                <p>Do ảnh hưởng của bão số 11, nhiều trận đấu thể thao tại các tỉnh miền Trung đã phải hoãn để đảm bảo an toàn cho vận động viên và khán giả.</p>
                             </div>
                         </div>
 
                         <!-- News Card 4 -->
                         <div class="news-card">
-                            <img src="https://via.placeholder.com/400x250" alt="Tin tức 4" class="news-img">
+                            <!-- THAY ẢNH GIẢI TRÍ TẠI ĐÂY -->
+                            <img src="ảnh/ảnh 7.jpg" alt="Giải trí" class="news-img">
                             <div class="news-content">
-                                <h3 class="news-title"><a href="#">Tiêu đề tin tức số 4 sẽ được hiển thị tại đây</a></h3>
-                                <div class="news-meta">14/10/2023 | Giải trí</div>
-                                <p>Mô tả ngắn về tin tức này sẽ được hiển thị tại đây.</p>
+                                <h3 class="news-title"><a href="#">Lễ hội âm nhạc tại Đà Nẵng bị hủy do bão số 11</a></h3>
+                                <div class="news-meta">6/10/2025 | Giải trí</div>
+                                <p>Lễ hội âm nhạc quy mô lớn dự kiến tổ chức tại Đà Nẵng cuối tuần này đã bị hủy do ảnh hưởng của bão số 11.</p>
                             </div>
                         </div>
 
                         <!-- News Card 5 -->
                         <div class="news-card">
-                            <img src="https://via.placeholder.com/400x250" alt="Tin tức 5" class="news-img">
+                            <!-- THAY ẢNH CÔNG NGHỆ TẠI ĐÂY -->
+                            <img src="ảnh/ảnh 8.jpg" alt="Công nghệ" class="news-img">
                             <div class="news-content">
-                                <h3 class="news-title"><a href="#">Tiêu đề tin tức số 5 sẽ được hiển thị tại đây</a></h3>
-                                <div class="news-meta">13/10/2023 | Công nghệ</div>
-                                <p>Mô tả ngắn về tin tức này sẽ được hiển thị tại đây.</p>
+                                <h3 class="news-title"><a href="#">Ứng dụng công nghệ theo dõi đường đi của bão số 11</a></h3>
+                                <div class="news-meta">5/10/2025 | Công nghệ</div>
+                                <p>Các ứng dụng công nghệ hiện đại đang được sử dụng để theo dõi chính xác đường đi và cường độ của bão số 11.</p>
                             </div>
                         </div>
 
                         <!-- News Card 6 -->
                         <div class="news-card">
-                            <img src="https://via.placeholder.com/400x250" alt="Tin tức 6" class="news-img">
+                            <!-- THAY ẢNH DỰ BÁO THỜI TIẾT TẠI ĐÂY -->
+                            <img src="ảnh/ảnh 9.jpg" alt="Thời tiết" class="news-img">
                             <div class="news-content">
-                                <h3 class="news-title"><a href="#">Tiêu đề tin tức số 6 sẽ được hiển thị tại đây</a></h3>
-                                <div class="news-meta">13/10/2023 | Thời sự</div>
-                                <p>Mô tả ngắn về tin tức này sẽ được hiển thị tại đây.</p>
+                                <h3 class="news-title"><a href="#">Dự báo thời tiết: Bão số 11 gây mưa lớn diện rộng</a></h3>
+                                <div class="news-meta">5/10/2025 | Thời sự</div>
+                                <p>Bão số 11 được dự báo sẽ gây mưa lớn diện rộng tại các tỉnh miền Trung và Bắc Bộ trong những ngày tới.</p>
                             </div>
                         </div>
                     </div>
@@ -444,11 +126,11 @@
                 <div class="sidebar-section">
                     <h3 class="sidebar-title">Chuyên mục</h3>
                     <ul class="category-list">
-                        <li><a href="#">Thời sự <span>(24)</span></a></li>
-                        <li><a href="#">Kinh tế <span>(18)</span></a></li>
-                        <li><a href="#">Thể thao <span>(15)</span></a></li>
-                        <li><a href="#">Giải trí <span>(22)</span></a></li>
-                        <li><a href="#">Công nghệ <span>(17)</span></a></li>
+                        <li><a onclick="showCategoryPage('thoi-su')">Thời sự <span>(24)</span></a></li>
+                        <li><a onclick="showCategoryPage('kinh-te')">Kinh tế <span>(18)</span></a></li>
+                        <li><a onclick="showCategoryPage('the-thao')">Thể thao <span>(15)</span></a></li>
+                        <li><a onclick="showCategoryPage('giai-tri')">Giải trí <span>(22)</span></a></li>
+                        <li><a onclick="showCategoryPage('cong-nghe')">Công nghệ <span>(17)</span></a></li>
                         <li><a href="#">Sức khỏe <span>(12)</span></a></li>
                         <li><a href="#">Đời sống <span>(20)</span></a></li>
                     </ul>
@@ -459,20 +141,20 @@
                     <h3 class="sidebar-title">Tin đang hot</h3>
                     <ul class="trending-list">
                         <li>
-                            <h4 class="trending-title"><a href="#">Tiêu đề tin tức hot số 1 sẽ được hiển thị tại đây</a></h4>
-                            <div class="trending-meta">15/10/2023 | 2.5K lượt xem</div>
+                            <h4 class="trending-title"><a href="#">Bão số 11: Hướng di chuyển và cường độ mới nhất</a></h4>
+                            <div class="trending-meta">7/10/2025 | 2.5K lượt xem</div>
                         </li>
                         <li>
-                            <h4 class="trending-title"><a href="#">Tiêu đề tin tức hot số 2 sẽ được hiển thị tại đây</a></h4>
-                            <div class="trending-meta">14/10/2023 | 1.8K lượt xem</div>
+                            <h4 class="trending-title"><a href="#">Các biện pháp phòng chống bão số 11 hiệu quả</a></h4>
+                            <div class="trending-meta">6/10/2025 | 1.8K lượt xem</div>
                         </li>
                         <li>
-                            <h4 class="trending-title"><a href="#">Tiêu đề tin tức hot số 3 sẽ được hiển thị tại đây</a></h4>
-                            <div class="trending-meta">14/10/2023 | 1.5K lượt xem</div>
+                            <h4 class="trending-title"><a href="#">Thiệt hại kinh tế dự báo từ bão số 11</a></h4>
+                            <div class="trending-meta">6/10/2025 | 1.5K lượt xem</div>
                         </li>
                         <li>
-                            <h4 class="trending-title"><a href="#">Tiêu đề tin tức hot số 4 sẽ được hiển thị tại đây</a></h4>
-                            <div class="trending-meta">13/10/2023 | 1.2K lượt xem</div>
+                            <h4 class="trending-title"><a href="#">Các chuyến bay bị ảnh hưởng bởi bão số 11</a></h4>
+                            <div class="trending-meta">5/10/2025 | 1.2K lượt xem</div>
                         </li>
                     </ul>
                 </div>
@@ -482,13 +164,16 @@
                     <h3 class="sidebar-title">Đăng ký nhận tin</h3>
                     <p>Nhận tin tức mới nhất hàng ngày qua email</p>
                     <form>
-                        <input type="email" placeholder="Email của bạn" style="width: 100%; padding: 0.5rem; margin: 0.5rem 0; border: 1px solid #ddd; border-radius: 4px;">
-                        <button type="submit" style="width: 100%; padding: 0.5rem; background-color: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer;">Đăng ký</button>
+                        <input type="email" placeholder="Email của bạn" class="newsletter-input">
+                        <button type="submit" class="newsletter-btn">Đăng ký</button>
                     </form>
                 </div>
             </aside>
         </div>
     </div>
+
+    <!-- Các trang chuyên mục (Thời sự, Kinh tế, Thể thao, Giải trí, Công nghệ) -->
+    <!-- Các trang này được tải từ file pages.html -->
 
     <!-- Footer -->
     <footer>
@@ -501,7 +186,7 @@
                 <div class="footer-section">
                     <h3>Liên kết nhanh</h3>
                     <ul class="footer-links">
-                        <li><a href="#">Trang chủ</a></li>
+                        <li><a href="#" onclick="showHomePage()">Trang chủ</a></li>
                         <li><a href="#">Giới thiệu</a></li>
                         <li><a href="#">Liên hệ</a></li>
                         <li><a href="#">Chính sách bảo mật</a></li>
@@ -511,11 +196,11 @@
                 <div class="footer-section">
                     <h3>Chuyên mục</h3>
                     <ul class="footer-links">
-                        <li><a href="#">Thời sự</a></li>
-                        <li><a href="#">Kinh tế</a></li>
-                        <li><a href="#">Thể thao</a></li>
-                        <li><a href="#">Giải trí</a></li>
-                        <li><a href="#">Công nghệ</a></li>
+                        <li><a href="#" onclick="showCategoryPage('thoi-su')">Thời sự</a></li>
+                        <li><a href="#" onclick="showCategoryPage('kinh-te')">Kinh tế</a></li>
+                        <li><a href="#" onclick="showCategoryPage('the-thao')">Thể thao</a></li>
+                        <li><a href="#" onclick="showCategoryPage('giai-tri')">Giải trí</a></li>
+                        <li><a href="#" onclick="showCategoryPage('cong-nghe')">Công nghệ</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -526,37 +211,11 @@
                 </div>
             </div>
             <div class="copyright">
-                &copy; 2023 Tin Tức Hàng Ngày. Tất cả các quyền được bảo lưu.
+                &copy; 2025 Tin Tức Hàng Ngày. Tất cả các quyền được bảo lưu.
             </div>
         </div>
     </footer>
 
-    <script>
-        // JavaScript để cập nhật ngày tháng
-        document.addEventListener('DOMContentLoaded', function() {
-            // Cập nhật ngày hiện tại
-            const currentDate = new Date();
-            const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-            const formattedDate = currentDate.toLocaleDateString('vi-VN', options);
-            
-            // Cập nhật ngày cho các bài viết mới
-            const newsDates = document.querySelectorAll('.news-meta, .featured-meta, .trending-meta');
-            newsDates.forEach(dateElement => {
-                if (dateElement.textContent.includes('15/10/2023')) {
-                    dateElement.textContent = dateElement.textContent.replace('15/10/2023', formattedDate);
-                }
-            });
-            
-            // Thêm hiệu ứng khi cuộn trang
-            window.addEventListener('scroll', function() {
-                const header = document.querySelector('header');
-                if (window.scrollY > 50) {
-                    header.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-                } else {
-                    header.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
-                }
-            });
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
