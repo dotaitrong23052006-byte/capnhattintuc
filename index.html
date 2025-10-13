@@ -3,219 +3,1450 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tin Tức Hàng Ngày</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="stylesheet" href="styles.css">
+    <title>Đếm Ngược Tết 2026</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #333;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 900px;
+            width: 90%;
+            backdrop-filter: blur(10px);
+            margin: 20px auto;
+        }
+
+        .current-date {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .current-date h2 {
+            font-size: 1.3em;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .date-time {
+            font-size: 1.1em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .date-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            color: #e74c3c;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .countdown-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+            min-width: 280px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .countdown-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .countdown-box.lunar {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .countdown-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .time-unit {
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+        .time-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            display: block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+        }
+
+        .time-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .separator {
+            font-size: 2em;
+            font-weight: bold;
+            color: white;
+            line-height: 60px;
+        }
+
+        .additional-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .additional-info h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            text-align: left;
+        }
+
+        .info-item {
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .info-item h4 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .info-item p {
+            color: #7f8c8d;
+            font-size: 0.95em;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 40px 20px 20px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h3 {
+            color: #3498db;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .footer-section p {
+            line-height: 1.6;
+            color: #ecf0f1;
+        }
+
+        .contact-info {
+            margin-top: 15px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .contact-icon {
+            width: 35px;
+            height: 35px;
+            background: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .contact-details {
+            flex: 1;
+        }
+
+        .contact-label {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 2px;
+            font-size: 0.9em;
+        }
+
+        .contact-value {
+            color: #ecf0f1;
+            font-size: 0.95em;
+        }
+
+        .contact-value a {
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-value a:hover {
+            color: #3498db;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: block;
+            padding: 5px 0;
+        }
+
+        .footer-links a:hover {
+            color: #3498db;
+            transform: translateX(5px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bdc3c7;
+            font-size: 0.9em;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: #3498db;
+            transform: translateY(-3px);
+        }
+
+        /* Newsletter Styles */
+        .newsletter-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .newsletter-section h4 {
+            color: #3498db;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .newsletter-section p {
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            color: #ecf0f1;
+        }
+
+        .newsletter-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .newsletter-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            font-size: 0.9em;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+
+        .newsletter-input:focus {
+            outline: none;
+            background: white;
+            border-color: #3498db;
+        }
+
+        .newsletter-input.error {
+            border-color: #e74c3c;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .newsletter-btn {
+            width: 100%;
+            padding: 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .newsletter-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .newsletter-btn:active {
+            transform: translateY(0);
+        }
+
+        .newsletter-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.8em;
+            margin-top: 5px;
+            text-align: left;
+            display: none;
+            background: rgba(231, 76, 60, 0.1);
+            padding: 8px;
+            border-radius: 5px;
+            border-left: 3px solid #e74c3c;
+        }
+
+        .success-message {
+            color: #2ecc71;
+            font-size: 0.9em;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 5px;
+            border: 1px solid #2ecc71;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success-message.hide {
+            animation: slideOut 0.3s ease;
+            display: none;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Admin Link */
+        .admin-link {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.8em;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .admin-link:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        /* Database Status */
+        .db-status {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(52, 152, 219, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            z-index: 1000;
+        }
+
+        .db-status.offline {
+            background: rgba(231, 76, 60, 0.9);
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #3498db;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2ecc71;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: #e74c3c;
+        }
+
+        .firework {
+            position: fixed;
+            width: 5px;
+            height: 5px;
+            background: #ffeb3b;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: firework 1s ease-out;
+        }
+
+        @keyframes firework {
+            0% {
+                transform: translate(var(--x), var(--y));
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty));
+                opacity: 0;
+            }
+        }
+
+        .location-info {
+            background: linear-gradient(135deg, #96ceb4, #4ecdc4);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Password Modal */
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .password-modal.show {
+            display: flex;
+        }
+
+        .password-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+        }
+
+        .password-content h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .password-input.error {
+            border-color: #e74c3c;
+        }
+
+        .password-btn {
+            width: 100%;
+            padding: 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .password-btn:hover {
+            background: #2980b9;
+        }
+
+        .password-error {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .password-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+        }
+
+        .password-link {
+            color: #3498db;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .password-link:hover {
+            text-decoration: underline;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .countdown-box {
+                min-width: 100%;
+            }
+            
+            .time-number {
+                font-size: 2em;
+            }
+            
+            .separator {
+                display: none;
+            }
+            
+            .date-time {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .toast {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+            
+            .admin-link {
+                top: 10px;
+                right: 10px;
+                font-size: 0.7em;
+                padding: 8px 12px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">Tin Tức Hàng Ngày</div>
-                <nav>
-                    <ul>
-                        <li><a href="#" onclick="showHomePage()">Trang chủ</a></li>
-                        <li><a href="#" onclick="showCategoryPage('thoi-su')">Thời sự</a></li>
-                        <li><a href="#" onclick="showCategoryPage('kinh-te')">Kinh tế</a></li>
-                        <li><a href="#" onclick="showCategoryPage('the-thao')">Thể thao</a></li>
-                        <li><a href="#" onclick="showCategoryPage('giai-tri')">Giải trí</a></li>
-                        <li><a href="#" onclick="showCategoryPage('cong-nghe')">Công nghệ</a></li>
-                    </ul>
-                </nav>
+    <!-- Link đến trang admin -->
+    <a href="#" class="admin-link" id="admin-link">📊 Quản lý Email</a>
+
+    <!-- Modal nhập mật khẩu -->
+    <div class="password-modal" id="password-modal">
+        <div class="password-content">
+            <button class="close-modal" id="close-modal">&times;</button>
+            <h2>🔐 Truy cập Quản lý Email</h2>
+            <p style="color: #7f8c8d; margin-bottom: 20px;">Vui lòng nhập mật khẩu để tiếp tục</p>
+            
+            <input type="password" id="admin-password" class="password-input" placeholder="Nhập mật khẩu quản lý">
+            <div id="password-error" class="password-error">
+                ⚠️ Mật khẩu không đúng. Vui lòng thử lại!
             </div>
-        </div>
-    </header>
-
-    <!-- Home Page -->
-    <div id="home-page" class="container">
-        <div class="main-content">
-            <!-- Main News Section -->
-            <div class="main-news">
-                <!-- Featured News -->
-                <section class="featured-news">
-                    <h2 class="section-title">Tin nổi bật</h2>
-                    <div class="featured-article">
-                        <!-- THAY ẢNH BÃO SỐ 11 TẠI ĐÂY -->
-                        <img src="ảnh/ảnh 5.jpg" alt="Bão số 11-tiền phong" class="featured-img">
-                        <div class="featured-content">
-                            <h3 class="featured-title"><a href="#">Bão số 11 tiến vào Biển Đông, các tỉnh miền Trung khẩn trương ứng phó</a></h3>
-                            <div class="featured-meta">Ngày đăng: 7/10/2025 | Tác giả: Admin | Chuyên mục: Thời sự</div>
-                            <p class="featured-excerpt">Bão số 11 với sức gió mạnh nhất cấp 12, giật cấp 15 đang di chuyển nhanh vào Biển Đông. Các tỉnh từ Quảng Ninh đến Quảng Ngãi được cảnh báo sẽ chịu ảnh hưởng trực tiếp trong 48 giờ tới. Chính quyền các địa phương đang khẩn trương triển khai các biện pháp ứng phó, sẵn sàng sơ tán người dân vùng trũng thấp.</p>
-                            <a href="#" class="read-more">Đọc tiếp</a>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Latest News -->
-                <section class="latest-news">
-                    <h2 class="section-title">Tin mới nhất</h2>
-                    <div class="news-grid">
-                        <!-- News Card 1 -->
-                        <div class="news-card">
-                            <!-- THAY ẢNH DI DỜI DÂN TẠI ĐÂY -->
-                            <img src="ảnh/ảnh 3.jpg" alt="dời dân"  class="news-img">
-                            <div class="news-content">
-                                <h3 class="news-title"><a href="#">Khẩn trương di dời người dân vùng nguy cơ cao do bão số 11</a></h3>
-                                <div class="news-meta">7/10/2025 | Thời sự</div>
-                                <p>Lực lượng chức năng đang tích cực hỗ trợ di dời người dân tại các khu vực có nguy cơ ngập lụt, sạt lở đất do ảnh hưởng của bão số 11.</p>
-                            </div>
-                        </div>
-
-                        <!-- News Card 2 -->
-                        <div class="news-card">
-                            <!-- THAY ẢNH KINH TẾ TẠI ĐÂY -->
-                            <img src="ảnh/ảnh 4.jpg" alt="Ảnh hưởng kinh tế" class="news-img">
-                            <div class="news-content">
-                                <h3 class="news-title"><a href="#">Bão số 11 có thể gây thiệt hại lớn cho ngành thủy sản và nông nghiệp</a></h3>
-                                <div class="news-meta">7/10/2025 | Kinh tế</div>
-                                <p>Các chuyên gia cảnh báo bão số 11 có thể gây thiệt hại nặng nề cho ngành thủy sản và nông nghiệp các tỉnh miền Trung.</p>
-                            </div>
-                        </div>
-
-                        <!-- News Card 3 -->
-                        <div class="news-card">
-                            <!-- THAY ẢNH THỂ THAO TẠI ĐÂY -->
-                            <img src="ảnh/ảnh 6.jpg" alt="Thể thao" class="news-img">
-                            <div class="news-content">
-                                <h3 class="news-title"><a href="#">Nhiều trận đấu thể thao bị hoãn do ảnh hưởng của bão số 11</a></h3>
-                                <div class="news-meta">6/10/2025 | Thể thao</div>
-                                <p>Do ảnh hưởng của bão số 11, nhiều trận đấu thể thao tại các tỉnh miền Trung đã phải hoãn để đảm bảo an toàn cho vận động viên và khán giả.</p>
-                            </div>
-                        </div>
-
-                        <!-- News Card 4 -->
-                        <div class="news-card">
-                            <!-- THAY ẢNH GIẢI TRÍ TẠI ĐÂY -->
-                            <img src="ảnh/ảnh 7.jpg" alt="Giải trí" class="news-img">
-                            <div class="news-content">
-                                <h3 class="news-title"><a href="#">Lễ hội âm nhạc tại Đà Nẵng bị hủy do bão số 11</a></h3>
-                                <div class="news-meta">6/10/2025 | Giải trí</div>
-                                <p>Lễ hội âm nhạc quy mô lớn dự kiến tổ chức tại Đà Nẵng cuối tuần này đã bị hủy do ảnh hưởng của bão số 11.</p>
-                            </div>
-                        </div>
-
-                        <!-- News Card 5 -->
-                        <div class="news-card">
-                            <!-- THAY ẢNH CÔNG NGHỆ TẠI ĐÂY -->
-                            <img src="ảnh/ảnh 8.jpg" alt="Công nghệ" class="news-img">
-                            <div class="news-content">
-                                <h3 class="news-title"><a href="#">Ứng dụng công nghệ theo dõi đường đi của bão số 11</a></h3>
-                                <div class="news-meta">5/10/2025 | Công nghệ</div>
-                                <p>Các ứng dụng công nghệ hiện đại đang được sử dụng để theo dõi chính xác đường đi và cường độ của bão số 11.</p>
-                            </div>
-                        </div>
-
-                        <!-- News Card 6 -->
-                        <div class="news-card">
-                            <!-- THAY ẢNH DỰ BÁO THỜI TIẾT TẠI ĐÂY -->
-                            <img src="ảnh/ảnh 9.jpg" alt="Thời tiết" class="news-img">
-                            <div class="news-content">
-                                <h3 class="news-title"><a href="#">Dự báo thời tiết: Bão số 11 gây mưa lớn diện rộng</a></h3>
-                                <div class="news-meta">5/10/2025 | Thời sự</div>
-                                <p>Bão số 11 được dự báo sẽ gây mưa lớn diện rộng tại các tỉnh miền Trung và Bắc Bộ trong những ngày tới.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+            
+            <button class="password-btn" id="submit-password">🔓 Truy cập</button>
+            
+            <div class="password-links">
+                <a href="index.html" class="password-link">← Quay lại trang chủ</a>
+                <span class="password-link" id="forgot-password">Quên mật khẩu?</span>
             </div>
-
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <!-- Categories -->
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Chuyên mục</h3>
-                    <ul class="category-list">
-                        <li><a onclick="showCategoryPage('thoi-su')">Thời sự <span>(24)</span></a></li>
-                        <li><a onclick="showCategoryPage('kinh-te')">Kinh tế <span>(18)</span></a></li>
-                        <li><a onclick="showCategoryPage('the-thao')">Thể thao <span>(15)</span></a></li>
-                        <li><a onclick="showCategoryPage('giai-tri')">Giải trí <span>(22)</span></a></li>
-                        <li><a onclick="showCategoryPage('cong-nghe')">Công nghệ <span>(17)</span></a></li>
-                        <li><a href="#">Sức khỏe <span>(12)</span></a></li>
-                        <li><a href="#">Đời sống <span>(20)</span></a></li>
-                    </ul>
-                </div>
-
-                <!-- Trending News -->
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Tin đang hot</h3>
-                    <ul class="trending-list">
-                        <li>
-                            <h4 class="trending-title"><a href="#">Bão số 11: Hướng di chuyển và cường độ mới nhất</a></h4>
-                            <div class="trending-meta">7/10/2025 | 2.5K lượt xem</div>
-                        </li>
-                        <li>
-                            <h4 class="trending-title"><a href="#">Các biện pháp phòng chống bão số 11 hiệu quả</a></h4>
-                            <div class="trending-meta">6/10/2025 | 1.8K lượt xem</div>
-                        </li>
-                        <li>
-                            <h4 class="trending-title"><a href="#">Thiệt hại kinh tế dự báo từ bão số 11</a></h4>
-                            <div class="trending-meta">6/10/2025 | 1.5K lượt xem</div>
-                        </li>
-                        <li>
-                            <h4 class="trending-title"><a href="#">Các chuyến bay bị ảnh hưởng bởi bão số 11</a></h4>
-                            <div class="trending-meta">5/10/2025 | 1.2K lượt xem</div>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Newsletter -->
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Đăng ký nhận tin</h3>
-                    <p>Nhận tin tức mới nhất hàng ngày qua email</p>
-                    <form>
-                        <input type="email" placeholder="Email của bạn" class="newsletter-input">
-                        <button type="submit" class="newsletter-btn">Đăng ký</button>
-                    </form>
-                </div>
-            </aside>
         </div>
     </div>
 
-    <!-- Các trang chuyên mục (Thời sự, Kinh tế, Thể thao, Giải trí, Công nghệ) -->
-    <!-- Các trang này được tải từ file pages.html -->
+    <!-- Database Status -->
+    <div class="db-status" id="db-status">🟢 Đang kết nối database...</div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Về chúng tôi</h3>
-                    <p>Trang tin tức hàng ngày cập nhật những thông tin mới nhất, nóng hổi về mọi lĩnh vực trong cuộc sống.</p>
+    <div class="container">
+        <!-- Loading spinner -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Đang kết nối database...</p>
+        </div>
+
+        <!-- Hiển thị ngày tháng hiện tại -->
+        <div class="current-date">
+            <h2>📅 Thời gian hiện tại của bạn</h2>
+            <div class="date-time">
+                <div class="date-item">
+                    <span>📆</span>
+                    <span id="current-date">Đang tải...</span>
                 </div>
-                <div class="footer-section">
-                    <h3>Liên kết nhanh</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" onclick="showHomePage()">Trang chủ</a></li>
-                        <li><a href="#">Giới thiệu</a></li>
-                        <li><a href="#">Liên hệ</a></li>
-                        <li><a href="#">Chính sách bảo mật</a></li>
-                        <li><a href="#">Điều khoản sử dụng</a></li>
-                    </ul>
+                <div class="date-item">
+                    <span>🕒</span>
+                    <span id="current-time">Đang tải...</span>
                 </div>
-                <div class="footer-section">
-                    <h3>Chuyên mục</h3>
-                    <ul class="footer-links">
-                        <li><a href="#" onclick="showCategoryPage('thoi-su')">Thời sự</a></li>
-                        <li><a href="#" onclick="showCategoryPage('kinh-te')">Kinh tế</a></li>
-                        <li><a href="#" onclick="showCategoryPage('the-thao')">Thể thao</a></li>
-                        <li><a href="#" onclick="showCategoryPage('giai-tri')">Giải trí</a></li>
-                        <li><a href="#" onclick="showCategoryPage('cong-nghe')">Công nghệ</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Liên hệ</h3>
-                    <p>Email: contact@tintuchangngay.com</p>
-                    <p>Điện thoại: (0123) 456-789</p>
-                    <p>Địa chỉ: 123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh</p>
+                <div class="date-item">
+                    <span>🌍</span>
+                    <span id="timezone">Đang tải...</span>
                 </div>
             </div>
-            <div class="copyright">
-                &copy; 2025 Tin Tức Hàng Ngày. Tất cả các quyền được bảo lưu.
+        </div>
+
+        <div class="header">
+            <h1>🎉 Đếm Ngược Tết 2026 🎉</h1>
+            <p>Chào đón năm mới với niềm vui và hạnh phúc!</p>
+        </div>
+
+        <div class="countdown-container">
+            <div class="countdown-box">
+                <div class="countdown-title">Tết Dương Lịch 2026</div>
+                <div id="solar-countdown">
+                    <div class="time-unit">
+                        <span class="time-number" id="solar-days">00</span>
+                        <span class="time-label">Ngày</span>
+                    </div>
+                    <span class="separator">:</span>
+                    <div class="time-unit">
+                        <span class="time-number" id="solar-hours">00</span>
+                        <span class="time-label">Giờ</span>
+                    </div>
+                    <span class="separator">:</span>
+                    <div class="time-unit">
+                        <span class="time-number" id="solar-minutes">00</span>
+                        <span class="time-label">Phút</span>
+                    </div>
+                    <span class="separator">:</span>
+                    <div class="time-unit">
+                        <span class="time-number" id="solar-seconds">00</span>
+                        <span class="time-label">Giây</span>
+                    </div>
+                </div>
             </div>
+
+            <div class="countdown-box lunar">
+                <div class="countdown-title">Tết Nguyên Đán Bính Ngọ</div>
+                <div id="lunar-countdown">
+                    <div class="time-unit">
+                        <span class="time-number" id="lunar-days">00</span>
+                        <span class="time-label">Ngày</span>
+                    </div>
+                    <span class="separator">:</span>
+                    <div class="time-unit">
+                        <span class="time-number" id="lunar-hours">00</span>
+                        <span class="time-label">Giờ</span>
+                    </div>
+                    <span class="separator">:</span>
+                    <div class="time-unit">
+                        <span class="time-number" id="lunar-minutes">00</span>
+                        <span class="time-label">Phút</span>
+                    </div>
+                    <span class="separator">:</span>
+                    <div class="time-unit">
+                        <span class="time-number" id="lunar-seconds">00</span>
+                        <span class="time-label">Giây</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin vị trí -->
+        <div class="location-info" id="location-info" style="display: none;">
+            <h3>📍 Thông tin vị trí của bạn</h3>
+            <div id="location-details">Đang tải thông tin vị trí...</div>
+        </div>
+
+        <div class="additional-info">
+            <h3>📅 Thông tin Tết 2026</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <h4>Tết Dương Lịch</h4>
+                    <p>Ngày 1 tháng 1 năm 2026<br>Thứ Năm</p>
+                </div>
+                <div class="info-item">
+                    <h4>Tết Âm Lịch</h4>
+                    <p>Ngày 17 tháng 2 năm 2026<br>Năm Bính Ngọ</p>
+                </div>
+                <div class="info-item">
+                    <h4>Nghỉ Tết Dương Lịch</h4>
+                    <p>1 ngày (01/01/2026)</p>
+                </div>
+                <div class="info-item">
+                    <h4>Nghỉ Tết Âm Lịch</h4>
+                    <p>7 ngày (từ 16/02 đến 22/02/2026)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Footer với thông tin liên hệ -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Về Chúng Tôi</h3>
+                <p>Website đếm ngược Tết 2026 - Nơi mang đến không khí Tết rộn ràng và những thông tin hữu ích về ngày Tết cổ truyền.</p>
+                
+                <!-- Phần liên hệ -->
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">@</div>
+                        <div class="contact-details">
+                            <div class="contact-label">EMAIL</div>
+                            <div class="contact-value">
+                                <a href="mailto:lienhe@demnguytet.com">lienhe@demnguytet.com</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📞</div>
+                        <div class="contact-details">
+                            <div class="contact-label">ĐIỆN THOẠI</div>
+                            <div class="contact-value">
+                                <a href="tel:+84901234567">0901 234 567</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-details">
+                            <div class="contact-label">ĐỊA CHỈ</div>
+                            <div class="contact-value">Số 123, Đường Láng, Quận Đống Đa, Hà Nội</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Liên Kết Nhanh</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Trang Chủ</a></li>
+                    <li><a href="#">Lịch Nghỉ Tết</a></li>
+                    <li><a href="#">Traditions</a></li>
+                    <li><a href="#">Lời Chúc Tết</a></li>
+                    <li><a href="#">Ẩm Thực Ngày Tết</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Thông Tin Hữu Ích</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Lịch Âm Dương 2026</a></li>
+                    <li><a href="#">Xu Hướng Tết 2026</a></li>
+                    <li><a href="#">Mâm Cỗ Tết</a></li>
+                    <li><a href="#">Du Lịch Tết</a></li>
+                    <li><a href="#">Quà Tết Ý Nghĩa</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Kết Nối Với Chúng Tôi</h3>
+                <p>Theo dõi để cập nhật những thông tin mới nhất về Tết 2026</p>
+                <div class="social-links">
+                    <a href="#" class="social-link">📘</a>
+                    <a href="#" class="social-link">📷</a>
+                    <a href="#" class="social-link">🐦</a>
+                    <a href="#" class="social-link">📹</a>
+                </div>
+                
+                <!-- Phần đăng ký nhận tin với validation -->
+                <div class="newsletter-section">
+                    <h4>📧 Đăng Ký Nhận Tin Tết</h4>
+                    <p>Nhận thông báo đặc biệt khi sắp đến Tết và các ưu đãi hấp dẫn!</p>
+                    
+                    <form id="newsletter-form" class="newsletter-form">
+                        <input type="email" id="newsletter-email" class="newsletter-input" placeholder="Nhập email của bạn..." required>
+                        
+                        <button type="submit" class="newsletter-btn" id="submit-btn">
+                            🎉 Đăng Ký Ngay
+                        </button>
+                        
+                        <!-- Thông báo lỗi chỉ hiển thị sau khi submit -->
+                        <div id="email-error" class="error-message">
+                            ⚠️ Vui lòng nhập đúng định dạng email (ví dụ: example@gmail.com)
+                        </div>
+                        
+                        <!-- Thông báo thành công - sẽ tự động biến mất sau 2 giây -->
+                        <div id="success-message" class="success-message">
+                            ✅ Đăng ký thành công! Cảm ơn bạn đã đăng ký nhận tin.
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2025 Đếm Ngược Tết 2026. Tất cả các quyền được bảo lưu. | 
+            <a href="#" style="color: #bdc3c7; text-decoration: none;">Chính sách bảo mật</a> | 
+            <a href="#" style="color: #bdc3c7; text-decoration: none;">Điều khoản sử dụng</a>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // ==================== PASSWORD PROTECTION ====================
+        const ADMIN_PASSWORD = "tet2026"; // Mật khẩu mặc định
+
+        // Lấy các element
+        const adminLink = document.getElementById('admin-link');
+        const passwordModal = document.getElementById('password-modal');
+        const closeModal = document.getElementById('close-modal');
+        const adminPasswordInput = document.getElementById('admin-password');
+        const submitPasswordBtn = document.getElementById('submit-password');
+        const passwordError = document.getElementById('password-error');
+        const forgotPasswordLink = document.getElementById('forgot-password');
+
+        // Mở modal khi click vào link quản lý
+        adminLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            openPasswordModal();
+        });
+
+        // Đóng modal
+        closeModal.addEventListener('click', closePasswordModal);
+
+        // Click outside modal để đóng
+        passwordModal.addEventListener('click', function(e) {
+            if (e.target === passwordModal) {
+                closePasswordModal();
+            }
+        });
+
+        // Xử lý nhấn Enter trong ô mật khẩu
+        adminPasswordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // Xử lý submit mật khẩu
+        submitPasswordBtn.addEventListener('click', checkPassword);
+
+        // Xử lý quên mật khẩu
+        forgotPasswordLink.addEventListener('click', function() {
+            showToast('📧 Liên hệ quản trị viên để lấy lại mật khẩu!', false);
+        });
+
+        function openPasswordModal() {
+            passwordModal.classList.add('show');
+            adminPasswordInput.value = '';
+            passwordError.style.display = 'none';
+            adminPasswordInput.classList.remove('error');
+            adminPasswordInput.focus();
+        }
+
+        function closePasswordModal() {
+            passwordModal.classList.remove('show');
+        }
+
+        function checkPassword() {
+            const password = adminPasswordInput.value.trim();
+            
+            if (password === ADMIN_PASSWORD) {
+                // Mật khẩu đúng - chuyển đến trang admin
+                window.location.href = 'admin.html';
+            } else {
+                // Mật khẩu sai
+                adminPasswordInput.classList.add('error');
+                passwordError.style.display = 'block';
+                adminPasswordInput.focus();
+                
+                // Hiệu ứng shake
+                adminPasswordInput.style.animation = 'none';
+                setTimeout(() => {
+                    adminPasswordInput.style.animation = 'shake 0.5s';
+                }, 10);
+            }
+        }
+
+        // ==================== FIREBASE CONFIGURATION ====================
+        const firebaseConfig = {
+            apiKey: "your-api-key-here",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "your-app-id"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Biến toàn cục
+        let isFirebaseConnected = false;
+
+        // ==================== FIREBASE FUNCTIONS ====================
+        async function initializeFirebase() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                
+                // Kiểm tra kết nối Firebase
+                await db.collection('test').limit(1).get();
+                isFirebaseConnected = true;
+                updateDbStatus('🟢 Đã kết nối database', true);
+                console.log('✅ Firebase kết nối thành công');
+            } catch (error) {
+                isFirebaseConnected = false;
+                updateDbStatus('🔴 Đang dùng localStorage', false);
+                console.warn('⚠️ Không thể kết nối Firebase, sử dụng localStorage');
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function updateDbStatus(message, isOnline) {
+            const statusElement = document.getElementById('db-status');
+            statusElement.textContent = message;
+            statusElement.className = isOnline ? 'db-status' : 'db-status offline';
+        }
+
+        async function saveEmailToDatabase(email) {
+            const emailData = {
+                email: email,
+                timestamp: new Date().toISOString(),
+                ip: await getClientIP(),
+                userAgent: navigator.userAgent,
+                source: 'Đếm Ngược Tết 2026',
+                status: 'active'
+            };
+
+            if (isFirebaseConnected) {
+                try {
+                    // Kiểm tra email đã tồn tại chưa
+                    const existingEmail = await db.collection('newsletter_emails')
+                        .where('email', '==', email)
+                        .get();
+
+                    if (!existingEmail.empty) {
+                        console.log('📧 Email đã tồn tại trong database');
+                        return { success: true, exists: true };
+                    }
+
+                    // Thêm email mới vào Firebase
+                    const result = await db.collection('newsletter_emails').add(emailData);
+                    console.log('✅ Email đã được lưu vào Firebase với ID:', result.id);
+                    return { success: true, exists: false, id: result.id };
+                } catch (error) {
+                    console.error('❌ Lỗi khi lưu email vào Firebase:', error);
+                    return saveEmailToLocalStorage(emailData);
+                }
+            } else {
+                return saveEmailToLocalStorage(emailData);
+            }
+        }
+
+        function saveEmailToLocalStorage(emailData) {
+            try {
+                let emails = JSON.parse(localStorage.getItem('newsletter_emails') || '[]');
+                
+                const exists = emails.some(e => e.email === emailData.email);
+                if (exists) {
+                    console.log('📧 Email đã tồn tại trong localStorage');
+                    return { success: true, exists: true };
+                }
+
+                emails.push({
+                    ...emailData,
+                    id: 'local_' + Date.now()
+                });
+                localStorage.setItem('newsletter_emails', JSON.stringify(emails));
+                console.log('✅ Email đã được lưu vào localStorage');
+                return { success: true, exists: false, id: 'local_' + Date.now() };
+            } catch (error) {
+                console.error('❌ Lỗi khi lưu email vào localStorage:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function getClientIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                return 'unknown';
+            }
+        }
+
+        async function sendEmailNotification(userEmail) {
+            const adminEmail = 'your-email@gmail.com';
+            
+            if (isFirebaseConnected) {
+                try {
+                    await db.collection('email_notifications').add({
+                        to: adminEmail,
+                        from: userEmail,
+                        subject: '🎉 Có người đăng ký nhận tin Tết mới!',
+                        body: `Có người dùng mới đăng ký nhận tin Tết 2026:\n\nEmail: ${userEmail}\nThời gian: ${new Date().toLocaleString('vi-VN')}\nIP: ${await getClientIP()}`,
+                        timestamp: new Date().toISOString(),
+                        status: 'pending'
+                    });
+                    console.log('✅ Đã gửi thông báo email đến Firebase');
+                    return true;
+                } catch (error) {
+                    console.error('❌ Lỗi gửi thông báo:', error);
+                    return false;
+                }
+            } else {
+                console.log('📧 Gửi email thông báo (simulation)');
+                return true;
+            }
+        }
+
+        // ==================== NEWSLETTER FORM HANDLING ====================
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        document.getElementById('newsletter-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const emailInput = document.getElementById('newsletter-email');
+            const errorMessage = document.getElementById('email-error');
+            const successMessage = document.getElementById('success-message');
+            const submitBtn = document.getElementById('submit-btn');
+            const email = emailInput.value.trim();
+            
+            // Reset states
+            emailInput.classList.remove('error');
+            errorMessage.style.display = 'none';
+            successMessage.classList.remove('show', 'hide');
+            
+            // Validate email
+            if (!email) {
+                showError(emailInput, errorMessage, '⚠️ Vui lòng nhập email của bạn!');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showError(emailInput, errorMessage, '⚠️ Vui lòng nhập đúng định dạng email!');
+                return;
+            }
+            
+            // Disable button và hiển thị loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '⏳ Đang xử lý...';
+            
+            try {
+                const saveResult = await saveEmailToDatabase(email);
+                
+                if (saveResult.success) {
+                    if (saveResult.exists) {
+                        showToast('📧 Email này đã được đăng ký trước đó!', false);
+                    } else {
+                        await sendEmailNotification(email);
+                        showSuccessMessage(successMessage);
+                        emailInput.value = '';
+                        showToast('🎉 Đăng ký thành công! Cảm ơn bạn!', false);
+                        createCelebrationFireworks();
+                    }
+                } else {
+                    throw new Error('Không thể lưu email');
+                }
+            } catch (error) {
+                console.error('❌ Lỗi đăng ký:', error);
+                showToast('❌ Có lỗi xảy ra, vui lòng thử lại!', true);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '🎉 Đăng Ký Ngay';
+            }
+        });
+
+        function showError(input, errorElement, message) {
+            input.classList.add('error');
+            errorElement.style.display = 'block';
+            errorElement.textContent = message;
+            input.focus();
+            showToast(message, true);
+        }
+
+        function showSuccessMessage(element) {
+            element.classList.remove('hide');
+            element.classList.add('show');
+            
+            setTimeout(() => {
+                element.classList.remove('show');
+                element.classList.add('hide');
+            }, 2000);
+        }
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast' + (isError ? ' error' : '');
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function createCelebrationFireworks() {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => createFirework(), i * 100);
+            }
+        }
+
+        // ==================== COUNTDOWN FUNCTIONS ====================
+        const solarNewYear = new Date('2026-01-01T00:00:00').getTime();
+        const lunarNewYear = new Date('2026-02-17T00:00:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            updateCountdownElement('solar', solarNewYear, now);
+            updateCountdownElement('lunar', lunarNewYear, now);
+            createAutoFireworks(solarNewYear - now, lunarNewYear - now);
+        }
+
+        function updateCountdownElement(prefix, targetTime, currentTime) {
+            const distance = targetTime - currentTime;
+            const element = document.getElementById(`${prefix}-countdown`);
+            
+            if (distance > 0) {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                document.getElementById(`${prefix}-days`).textContent = days.toString().padStart(2, '0');
+                document.getElementById(`${prefix}-hours`).textContent = hours.toString().padStart(2, '0');
+                document.getElementById(`${prefix}-minutes`).textContent = minutes.toString().padStart(2, '0');
+                document.getElementById(`${prefix}-seconds`).textContent = seconds.toString().padStart(2, '0');
+            } else {
+                element.innerHTML = '<div style="font-size: 1.5em; font-weight: bold;">🎊 Đã đến Tết!</div>';
+            }
+        }
+
+        // ==================== DATE & TIME FUNCTIONS ====================
+        function updateCurrentDateTime() {
+            const now = new Date();
+            
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            const dateString = now.toLocaleDateString('vi-VN', options);
+            
+            const timeString = now.toLocaleTimeString('vi-VN', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const timezoneOffset = -now.getTimezoneOffset() / 60;
+            const timezoneString = `UTC${timezoneOffset >= 0 ? '+' : ''}${timezoneOffset} (${timezone})`;
+            
+            document.getElementById('current-date').textContent = dateString;
+            document.getElementById('current-time').textContent = timeString;
+            document.getElementById('timezone').textContent = timezoneString;
+        }
+
+        // ==================== LOCATION FUNCTIONS ====================
+        function getLocationInfo() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        
+                        try {
+                            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                            const data = await response.json();
+                            
+                            const locationInfo = document.getElementById('location-info');
+                            const locationDetails = document.getElementById('location-details');
+                            
+                            let locationText = '';
+                            if (data.address) {
+                                const city = data.address.city || data.address.town || data.address.village || '';
+                                const country = data.address.country || '';
+                                locationText = `Bạn đang ở: ${city}${city && country ? ', ' : ''}${country}`;
+                            } else {
+                                locationText = `Tọa độ: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+                            }
+                            
+                            locationDetails.textContent = locationText;
+                            locationInfo.style.display = 'block';
+                        } catch (error) {
+                            console.log('Không thể lấy thông tin vị trí chi tiết');
+                        }
+                    },
+                    (error) => {
+                        console.log('Người dùng không cho phép truy cập vị trí');
+                    }
+                );
+            }
+        }
+
+        // ==================== FIREWORKS FUNCTIONS ====================
+        function createAutoFireworks(solarDistance, lunarDistance) {
+            if (solarDistance < 10 * 24 * 60 * 60 * 1000 || lunarDistance < 10 * 24 * 60 * 60 * 1000) {
+                if (Math.random() < 0.1) {
+                    createFirework();
+                }
+            }
+        }
+
+        function createFirework() {
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            
+            const startX = Math.random() * window.innerWidth;
+            const startY = window.innerHeight;
+            const endX = startX + (Math.random() - 0.5) * 200;
+            const endY = startY - Math.random() * 300 - 100;
+            
+            firework.style.setProperty('--x', startX + 'px');
+            firework.style.setProperty('--y', startY + 'px');
+            firework.style.setProperty('--tx', (endX - startX) + 'px');
+            firework.style.setProperty('--ty', (endY - startY) + 'px');
+            
+            const colors = ['#ffeb3b', '#e74c3c', '#9b59b6', '#3498db', '#2ecc71'];
+            firework.style.background = colors[Math.floor(Math.random() * colors.length)];
+            
+            document.body.appendChild(firework);
+            
+            setTimeout(() => {
+                if (firework.parentNode) {
+                    firework.parentNode.removeChild(firework);
+                }
+            }, 1000);
+        }
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFirebase();
+            updateCurrentDateTime();
+            updateCountdown();
+            
+            setInterval(updateCurrentDateTime, 1000);
+            setInterval(updateCountdown, 1000);
+            
+            setTimeout(getLocationInfo, 2000);
+
+            document.addEventListener('click', function(e) {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => createFirework(), i * 100);
+                }
+            });
+
+            showWelcomeMessage();
+        });
+
+        function showWelcomeMessage() {
+            const hour = new Date().getHours();
+            let greeting = '';
+            
+            if (hour < 12) {
+                greeting = 'Chào buổi sáng! 🌅';
+            } else if (hour < 18) {
+                greeting = 'Chào buổi chiều! ☀️';
+            } else {
+                greeting = 'Chào buổi tối! 🌙';
+            }
+            
+            console.log(greeting + ' Chào mừng đến với Đếm Ngược Tết 2026!');
+        }
+    </script>
 </body>
 </html>
