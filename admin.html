@@ -566,21 +566,29 @@
         }
 
         // ==================== FIREBASE CONFIGURATION ====================
+        // THAY THẾ BẰNG CẤU HÌNH FIREBASE THỰC TẾ CỦA BẠN
         const firebaseConfig = {
-            apiKey: "your-api-key-here",
+            apiKey: "your-actual-api-key",
             authDomain: "your-project.firebaseapp.com",
-            projectId: "your-project-id",
+            projectId: "your-actual-project-id",
             storageBucket: "your-project.appspot.com",
             messagingSenderId: "123456789",
-            appId: "your-app-id"
+            appId: "your-actual-app-id"
         };
 
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
+        let app;
+        let db;
         let isOnline = false;
         let allEmails = [];
+
+        try {
+            app = firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            console.log('✅ Firebase initialized in admin');
+        } catch (error) {
+            console.warn('⚠️ Firebase initialization failed in admin:', error);
+        }
 
         // ==================== ADMIN INITIALIZATION ====================
         function initializeAdmin() {
@@ -591,10 +599,14 @@
         // ==================== FIREBASE FUNCTIONS ====================
         async function checkConnection() {
             try {
-                await db.collection('newsletter_emails').limit(1).get();
-                isOnline = true;
-                updateSyncStatus('🟢 Đã kết nối database', true);
-                return true;
+                if (db) {
+                    await db.collection('newsletter_emails').limit(1).get();
+                    isOnline = true;
+                    updateSyncStatus('🟢 Đã kết nối database', true);
+                    return true;
+                } else {
+                    throw new Error('Firebase not initialized');
+                }
             } catch (error) {
                 isOnline = false;
                 updateSyncStatus('🔴 Mất kết nối - Đang dùng dữ liệu local', false);
@@ -610,6 +622,8 @@
 
         async function getEmailsFromFirebase() {
             try {
+                if (!db) throw new Error('Firebase not initialized');
+                
                 const snapshot = await db.collection('newsletter_emails')
                     .orderBy('timestamp', 'desc')
                     .get();
@@ -661,6 +675,7 @@
 
         async function deleteEmailFromFirebase(emailId) {
             try {
+                if (!db) throw new Error('Firebase not initialized');
                 await db.collection('newsletter_emails').doc(emailId).delete();
                 return true;
             } catch (error) {
@@ -683,8 +698,8 @@
 
         // ==================== SYNC FUNCTIONS ====================
         async function syncWithFirebase() {
-            if (!isOnline) {
-                showToast('❌ Không có kết nối internet!', true);
+            if (!isOnline || !db) {
+                showToast('❌ Không có kết nối internet hoặc Firebase chưa khởi tạo!', true);
                 return;
             }
 
@@ -828,7 +843,7 @@
             }
 
             try {
-                if (isOnline) {
+                if (isOnline && db) {
                     const snapshot = await db.collection('newsletter_emails').get();
                     const deletePromises = snapshot.docs.map(doc => doc.ref.delete());
                     await Promise.all(deletePromises);

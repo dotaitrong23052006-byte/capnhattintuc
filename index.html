@@ -978,475 +978,500 @@
         </div>
     </footer>
 
-    <script>
-        // ==================== PASSWORD PROTECTION ====================
-        const ADMIN_PASSWORD = "tet2026"; // Mật khẩu mặc định
+<script>
+    // ==================== PASSWORD PROTECTION ====================
+    const ADMIN_PASSWORD = "tet2026";
 
-        // Lấy các element
-        const adminLink = document.getElementById('admin-link');
-        const passwordModal = document.getElementById('password-modal');
-        const closeModal = document.getElementById('close-modal');
-        const adminPasswordInput = document.getElementById('admin-password');
-        const submitPasswordBtn = document.getElementById('submit-password');
-        const passwordError = document.getElementById('password-error');
-        const forgotPasswordLink = document.getElementById('forgot-password');
+    // Lấy các element
+    const adminLink = document.getElementById('admin-link');
+    const passwordModal = document.getElementById('password-modal');
+    const closeModal = document.getElementById('close-modal');
+    const adminPasswordInput = document.getElementById('admin-password');
+    const submitPasswordBtn = document.getElementById('submit-password');
+    const passwordError = document.getElementById('password-error');
+    const forgotPasswordLink = document.getElementById('forgot-password');
 
-        // Mở modal khi click vào link quản lý
-        adminLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            openPasswordModal();
-        });
+    // Mở modal khi click vào link quản lý
+    adminLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        openPasswordModal();
+    });
 
-        // Đóng modal
-        closeModal.addEventListener('click', closePasswordModal);
+    // Đóng modal
+    closeModal.addEventListener('click', closePasswordModal);
 
-        // Click outside modal để đóng
-        passwordModal.addEventListener('click', function(e) {
-            if (e.target === passwordModal) {
-                closePasswordModal();
-            }
-        });
+    // Click outside modal để đóng
+    passwordModal.addEventListener('click', function(e) {
+        if (e.target === passwordModal) {
+            closePasswordModal();
+        }
+    });
 
-        // Xử lý nhấn Enter trong ô mật khẩu
-        adminPasswordInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
-        });
+    // Xử lý nhấn Enter trong ô mật khẩu
+    adminPasswordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            checkPassword();
+        }
+    });
 
-        // Xử lý submit mật khẩu
-        submitPasswordBtn.addEventListener('click', checkPassword);
+    // Xử lý submit mật khẩu
+    submitPasswordBtn.addEventListener('click', checkPassword);
 
-        // Xử lý quên mật khẩu
-        forgotPasswordLink.addEventListener('click', function() {
-            showToast('📧 Liên hệ quản trị viên để lấy lại mật khẩu!', false);
-        });
+    // Xử lý quên mật khẩu
+    forgotPasswordLink.addEventListener('click', function() {
+        showToast('📧 Liên hệ: dotaitrong23052006@gmail.com để lấy lại mật khẩu!', false);
+    });
 
-        function openPasswordModal() {
-            passwordModal.classList.add('show');
-            adminPasswordInput.value = '';
-            passwordError.style.display = 'none';
-            adminPasswordInput.classList.remove('error');
+    function openPasswordModal() {
+        passwordModal.classList.add('show');
+        adminPasswordInput.value = '';
+        passwordError.style.display = 'none';
+        adminPasswordInput.classList.remove('error');
+        adminPasswordInput.focus();
+    }
+
+    function closePasswordModal() {
+        passwordModal.classList.remove('show');
+    }
+
+    function checkPassword() {
+        const password = adminPasswordInput.value.trim();
+        
+        if (password === ADMIN_PASSWORD) {
+            window.location.href = 'admin.html';
+        } else {
+            adminPasswordInput.classList.add('error');
+            passwordError.style.display = 'block';
             adminPasswordInput.focus();
-        }
-
-        function closePasswordModal() {
-            passwordModal.classList.remove('show');
-        }
-
-        function checkPassword() {
-            const password = adminPasswordInput.value.trim();
             
-            if (password === ADMIN_PASSWORD) {
-                // Mật khẩu đúng - chuyển đến trang admin
-                window.location.href = 'admin.html';
-            } else {
-                // Mật khẩu sai
-                adminPasswordInput.classList.add('error');
-                passwordError.style.display = 'block';
-                adminPasswordInput.focus();
-                
-                // Hiệu ứng shake
-                adminPasswordInput.style.animation = 'none';
-                setTimeout(() => {
-                    adminPasswordInput.style.animation = 'shake 0.5s';
-                }, 10);
-            }
+            adminPasswordInput.style.animation = 'none';
+            setTimeout(() => {
+                adminPasswordInput.style.animation = 'shake 0.5s';
+            }, 10);
         }
+    }
 
-        // ==================== FIREBASE CONFIGURATION ====================
-        const firebaseConfig = {
-            apiKey: "your-api-key-here",
-            authDomain: "your-project.firebaseapp.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "your-app-id"
+    // ==================== FIREBASE CONFIGURATION ====================
+    // TẠM THỜI COMMENT FIREBASE - SỬ DỤNG LOCALSTORAGE TRƯỚC
+    /*
+    const firebaseConfig = {
+        apiKey: "your-api-key",
+        authDomain: "your-project.firebaseapp.com",
+        projectId: "your-project-id",
+        storageBucket: "your-project.appspot.com",
+        messagingSenderId: "123456789",
+        appId: "your-app-id"
+    };
+
+    let app;
+    let db;
+    let isFirebaseConnected = false;
+
+    try {
+        app = firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        console.log('✅ Firebase initialized');
+    } catch (error) {
+        console.warn('⚠️ Firebase initialization failed:', error);
+    }
+    */
+
+    let isFirebaseConnected = false; // Tạm thời set false
+
+    // ==================== FIREBASE FUNCTIONS ====================
+    async function initializeFirebase() {
+        try {
+            document.getElementById('loading').style.display = 'block';
+            
+            // Tạm thời bỏ qua Firebase
+            isFirebaseConnected = false;
+            updateDbStatus('🔴 Đang dùng localStorage', false);
+            console.log('⚠️ Đang sử dụng localStorage');
+            
+        } catch (error) {
+            isFirebaseConnected = false;
+            updateDbStatus('🔴 Đang dùng localStorage', false);
+            console.warn('⚠️ Sử dụng localStorage');
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
+    function updateDbStatus(message, isOnline) {
+        const statusElement = document.getElementById('db-status');
+        statusElement.textContent = message;
+        statusElement.className = isOnline ? 'db-status' : 'db-status offline';
+    }
+
+    // HÀM CHÍNH - LƯU EMAIL VÀO LOCALSTORAGE
+    async function saveEmailToDatabase(email) {
+        console.log('🔄 Bắt đầu lưu email:', email);
+        
+        const emailData = {
+            email: email,
+            timestamp: new Date().toISOString(),
+            ip: await getClientIP(),
+            userAgent: navigator.userAgent,
+            source: 'Đếm Ngược Tết 2026',
+            status: 'active'
         };
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        // LUÔN SỬ DỤNG LOCALSTORAGE
+        return saveEmailToLocalStorage(emailData);
+    }
 
-        // Biến toàn cục
-        let isFirebaseConnected = false;
-
-        // ==================== FIREBASE FUNCTIONS ====================
-        async function initializeFirebase() {
-            try {
-                document.getElementById('loading').style.display = 'block';
-                
-                // Kiểm tra kết nối Firebase
-                await db.collection('test').limit(1).get();
-                isFirebaseConnected = true;
-                updateDbStatus('🟢 Đã kết nối database', true);
-                console.log('✅ Firebase kết nối thành công');
-            } catch (error) {
-                isFirebaseConnected = false;
-                updateDbStatus('🔴 Đang dùng localStorage', false);
-                console.warn('⚠️ Không thể kết nối Firebase, sử dụng localStorage');
-            } finally {
-                document.getElementById('loading').style.display = 'none';
+    function saveEmailToLocalStorage(emailData) {
+        try {
+            // Lấy danh sách email hiện tại từ localStorage
+            let emails = JSON.parse(localStorage.getItem('newsletter_emails') || '[]');
+            console.log('📧 Emails hiện tại trong localStorage:', emails);
+            
+            // Kiểm tra email đã tồn tại chưa
+            const exists = emails.some(e => e.email.toLowerCase() === emailData.email.toLowerCase());
+            if (exists) {
+                console.log('❌ Email đã tồn tại:', emailData.email);
+                return { success: true, exists: true };
             }
-        }
 
-        function updateDbStatus(message, isOnline) {
-            const statusElement = document.getElementById('db-status');
-            statusElement.textContent = message;
-            statusElement.className = isOnline ? 'db-status' : 'db-status offline';
-        }
-
-        async function saveEmailToDatabase(email) {
-            const emailData = {
-                email: email,
-                timestamp: new Date().toISOString(),
-                ip: await getClientIP(),
-                userAgent: navigator.userAgent,
-                source: 'Đếm Ngược Tết 2026',
-                status: 'active'
+            // Thêm email mới
+            const newEmail = {
+                ...emailData,
+                id: 'local_' + Date.now()
             };
-
-            if (isFirebaseConnected) {
-                try {
-                    // Kiểm tra email đã tồn tại chưa
-                    const existingEmail = await db.collection('newsletter_emails')
-                        .where('email', '==', email)
-                        .get();
-
-                    if (!existingEmail.empty) {
-                        console.log('📧 Email đã tồn tại trong database');
-                        return { success: true, exists: true };
-                    }
-
-                    // Thêm email mới vào Firebase
-                    const result = await db.collection('newsletter_emails').add(emailData);
-                    console.log('✅ Email đã được lưu vào Firebase với ID:', result.id);
-                    return { success: true, exists: false, id: result.id };
-                } catch (error) {
-                    console.error('❌ Lỗi khi lưu email vào Firebase:', error);
-                    return saveEmailToLocalStorage(emailData);
-                }
-            } else {
-                return saveEmailToLocalStorage(emailData);
-            }
+            emails.push(newEmail);
+            
+            // Lưu vào localStorage
+            localStorage.setItem('newsletter_emails', JSON.stringify(emails));
+            console.log('✅ Đã lưu email thành công:', newEmail);
+            console.log('📊 Tổng số email sau khi lưu:', emails.length);
+            
+            return { success: true, exists: false, id: newEmail.id };
+        } catch (error) {
+            console.error('❌ Lỗi khi lưu email vào localStorage:', error);
+            return { success: false, error: error.message };
         }
+    }
 
-        function saveEmailToLocalStorage(emailData) {
-            try {
-                let emails = JSON.parse(localStorage.getItem('newsletter_emails') || '[]');
-                
-                const exists = emails.some(e => e.email === emailData.email);
-                if (exists) {
-                    console.log('📧 Email đã tồn tại trong localStorage');
-                    return { success: true, exists: true };
-                }
+    // Hàm debug để kiểm tra dữ liệu
+    function debugEmailStorage() {
+        console.log('=== DEBUG EMAIL STORAGE ===');
+        const localEmails = JSON.parse(localStorage.getItem('newsletter_emails') || '[]');
+        console.log('LocalStorage emails:', localEmails);
+        console.log('Total emails in localStorage:', localEmails.length);
+        console.log('===========================');
+        return localEmails;
+    }
 
-                emails.push({
-                    ...emailData,
-                    id: 'local_' + Date.now()
-                });
-                localStorage.setItem('newsletter_emails', JSON.stringify(emails));
-                console.log('✅ Email đã được lưu vào localStorage');
-                return { success: true, exists: false, id: 'local_' + Date.now() };
-            } catch (error) {
-                console.error('❌ Lỗi khi lưu email vào localStorage:', error);
-                return { success: false, error: error.message };
-            }
+    async function getClientIP() {
+        try {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            return data.ip;
+        } catch (error) {
+            return 'unknown';
         }
+    }
 
-        async function getClientIP() {
-            try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
-                return data.ip;
-            } catch (error) {
-                return 'unknown';
-            }
+    async function sendEmailNotification(userEmail) {
+        console.log('📧 Gửi thông báo email (simulation):', userEmail);
+        return true;
+    }
+
+    // ==================== NEWSLETTER FORM HANDLING ====================
+    function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    // XỬ LÝ FORM ĐĂNG KÝ - QUAN TRỌNG
+    document.getElementById('newsletter-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        console.log('🎯 Form submitted!');
+        
+        const emailInput = document.getElementById('newsletter-email');
+        const errorMessage = document.getElementById('email-error');
+        const successMessage = document.getElementById('success-message');
+        const submitBtn = document.getElementById('submit-btn');
+        const email = emailInput.value.trim();
+        
+        // Reset states
+        emailInput.classList.remove('error');
+        errorMessage.style.display = 'none';
+        successMessage.classList.remove('show', 'hide');
+        
+        console.log('📝 Email input:', email);
+
+        // Validate email
+        if (!email) {
+            console.log('❌ Email trống');
+            showError(emailInput, errorMessage, '⚠️ Vui lòng nhập email của bạn!');
+            return;
         }
-
-        async function sendEmailNotification(userEmail) {
-            const adminEmail = 'your-email@gmail.com';
-            
-            if (isFirebaseConnected) {
-                try {
-                    await db.collection('email_notifications').add({
-                        to: adminEmail,
-                        from: userEmail,
-                        subject: '🎉 Có người đăng ký nhận tin Tết mới!',
-                        body: `Có người dùng mới đăng ký nhận tin Tết 2026:\n\nEmail: ${userEmail}\nThời gian: ${new Date().toLocaleString('vi-VN')}\nIP: ${await getClientIP()}`,
-                        timestamp: new Date().toISOString(),
-                        status: 'pending'
-                    });
-                    console.log('✅ Đã gửi thông báo email đến Firebase');
-                    return true;
-                } catch (error) {
-                    console.error('❌ Lỗi gửi thông báo:', error);
-                    return false;
-                }
-            } else {
-                console.log('📧 Gửi email thông báo (simulation)');
-                return true;
-            }
+        
+        if (!validateEmail(email)) {
+            console.log('❌ Email không hợp lệ:', email);
+            showError(emailInput, errorMessage, '⚠️ Vui lòng nhập đúng định dạng email!');
+            return;
         }
+        
+        console.log('✅ Email hợp lệ, bắt đầu xử lý...');
 
-        // ==================== NEWSLETTER FORM HANDLING ====================
-        function validateEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
+        // Disable button và hiển thị loading
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ Đang xử lý...';
+        submitBtn.style.background = '#95a5a6';
+        
+        // Thêm delay để thấy rõ trạng thái loading
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-        document.getElementById('newsletter-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        try {
+            console.log('🔄 Đang lưu email...');
+            const saveResult = await saveEmailToDatabase(email);
+            console.log('📊 Kết quả lưu:', saveResult);
             
-            const emailInput = document.getElementById('newsletter-email');
-            const errorMessage = document.getElementById('email-error');
-            const successMessage = document.getElementById('success-message');
-            const submitBtn = document.getElementById('submit-btn');
-            const email = emailInput.value.trim();
-            
-            // Reset states
-            emailInput.classList.remove('error');
-            errorMessage.style.display = 'none';
-            successMessage.classList.remove('show', 'hide');
-            
-            // Validate email
-            if (!email) {
-                showError(emailInput, errorMessage, '⚠️ Vui lòng nhập email của bạn!');
-                return;
-            }
-            
-            if (!validateEmail(email)) {
-                showError(emailInput, errorMessage, '⚠️ Vui lòng nhập đúng định dạng email!');
-                return;
-            }
-            
-            // Disable button và hiển thị loading
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '⏳ Đang xử lý...';
-            
-            try {
-                const saveResult = await saveEmailToDatabase(email);
-                
-                if (saveResult.success) {
-                    if (saveResult.exists) {
-                        showToast('📧 Email này đã được đăng ký trước đó!', false);
-                    } else {
-                        await sendEmailNotification(email);
-                        showSuccessMessage(successMessage);
-                        emailInput.value = '';
-                        showToast('🎉 Đăng ký thành công! Cảm ơn bạn!', false);
-                        createCelebrationFireworks();
-                    }
+            if (saveResult.success) {
+                if (saveResult.exists) {
+                    console.log('ℹ️ Email đã tồn tại');
+                    showToast('📧 Email này đã được đăng ký trước đó!', false);
                 } else {
-                    throw new Error('Không thể lưu email');
+                    console.log('🎉 Email mới được đăng ký thành công');
+                    await sendEmailNotification(email);
+                    showSuccessMessage(successMessage);
+                    emailInput.value = '';
+                    showToast('🎉 Đăng ký thành công! Cảm ơn bạn!', false);
+                    createCelebrationFireworks();
+                    
+                    // Debug: hiển thị tất cả emails đã lưu
+                    const allEmails = debugEmailStorage();
+                    console.log('🎊 Đăng ký hoàn tất! Tổng số email:', allEmails.length);
                 }
-            } catch (error) {
-                console.error('❌ Lỗi đăng ký:', error);
-                showToast('❌ Có lỗi xảy ra, vui lòng thử lại!', true);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '🎉 Đăng Ký Ngay';
-            }
-        });
-
-        function showError(input, errorElement, message) {
-            input.classList.add('error');
-            errorElement.style.display = 'block';
-            errorElement.textContent = message;
-            input.focus();
-            showToast(message, true);
-        }
-
-        function showSuccessMessage(element) {
-            element.classList.remove('hide');
-            element.classList.add('show');
-            
-            setTimeout(() => {
-                element.classList.remove('show');
-                element.classList.add('hide');
-            }, 2000);
-        }
-
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast' + (isError ? ' error' : '');
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        function createCelebrationFireworks() {
-            for (let i = 0; i < 10; i++) {
-                setTimeout(() => createFirework(), i * 100);
-            }
-        }
-
-        // ==================== COUNTDOWN FUNCTIONS ====================
-        const solarNewYear = new Date('2026-01-01T00:00:00').getTime();
-        const lunarNewYear = new Date('2026-02-17T00:00:00').getTime();
-
-        function updateCountdown() {
-            const now = new Date().getTime();
-            updateCountdownElement('solar', solarNewYear, now);
-            updateCountdownElement('lunar', lunarNewYear, now);
-            createAutoFireworks(solarNewYear - now, lunarNewYear - now);
-        }
-
-        function updateCountdownElement(prefix, targetTime, currentTime) {
-            const distance = targetTime - currentTime;
-            const element = document.getElementById(`${prefix}-countdown`);
-            
-            if (distance > 0) {
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                
-                document.getElementById(`${prefix}-days`).textContent = days.toString().padStart(2, '0');
-                document.getElementById(`${prefix}-hours`).textContent = hours.toString().padStart(2, '0');
-                document.getElementById(`${prefix}-minutes`).textContent = minutes.toString().padStart(2, '0');
-                document.getElementById(`${prefix}-seconds`).textContent = seconds.toString().padStart(2, '0');
             } else {
-                element.innerHTML = '<div style="font-size: 1.5em; font-weight: bold;">🎊 Đã đến Tết!</div>';
+                throw new Error('Không thể lưu email: ' + (saveResult.error || 'Unknown error'));
             }
+        } catch (error) {
+            console.error('❌ Lỗi đăng ký:', error);
+            showToast('❌ Có lỗi xảy ra, vui lòng thử lại!', true);
+        } finally {
+            // Luôn reset button về trạng thái ban đầu
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '🎉 Đăng Ký Ngay';
+            submitBtn.style.background = '#e74c3c';
+            console.log('🔄 Reset button state');
         }
+    });
 
-        // ==================== DATE & TIME FUNCTIONS ====================
-        function updateCurrentDateTime() {
-            const now = new Date();
-            
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            };
-            const dateString = now.toLocaleDateString('vi-VN', options);
-            
-            const timeString = now.toLocaleTimeString('vi-VN', { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit' 
-            });
-            
-            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const timezoneOffset = -now.getTimezoneOffset() / 60;
-            const timezoneString = `UTC${timezoneOffset >= 0 ? '+' : ''}${timezoneOffset} (${timezone})`;
-            
-            document.getElementById('current-date').textContent = dateString;
-            document.getElementById('current-time').textContent = timeString;
-            document.getElementById('timezone').textContent = timezoneString;
+    function showError(input, errorElement, message) {
+        input.classList.add('error');
+        errorElement.style.display = 'block';
+        errorElement.textContent = message;
+        input.focus();
+        showToast(message, true);
+    }
+
+    function showSuccessMessage(element) {
+        element.classList.remove('hide');
+        element.classList.add('show');
+        
+        setTimeout(() => {
+            element.classList.remove('show');
+            element.classList.add('hide');
+        }, 5000); // Hiển thị lâu hơn - 5 giây
+    }
+
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'toast' + (isError ? ' error' : '');
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 4000);
+    }
+
+    function createCelebrationFireworks() {
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => createFirework(), i * 150);
         }
+    }
 
-        // ==================== LOCATION FUNCTIONS ====================
-        function getLocationInfo() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                        const latitude = position.coords.latitude;
-                        const longitude = position.coords.longitude;
+    // ==================== COUNTDOWN FUNCTIONS ====================
+    const solarNewYear = new Date('2026-01-01T00:00:00').getTime();
+    const lunarNewYear = new Date('2026-02-17T00:00:00').getTime();
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        updateCountdownElement('solar', solarNewYear, now);
+        updateCountdownElement('lunar', lunarNewYear, now);
+        createAutoFireworks(solarNewYear - now, lunarNewYear - now);
+    }
+
+    function updateCountdownElement(prefix, targetTime, currentTime) {
+        const distance = targetTime - currentTime;
+        const element = document.getElementById(`${prefix}-countdown`);
+        
+        if (distance > 0) {
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            document.getElementById(`${prefix}-days`).textContent = days.toString().padStart(2, '0');
+            document.getElementById(`${prefix}-hours`).textContent = hours.toString().padStart(2, '0');
+            document.getElementById(`${prefix}-minutes`).textContent = minutes.toString().padStart(2, '0');
+            document.getElementById(`${prefix}-seconds`).textContent = seconds.toString().padStart(2, '0');
+        } else {
+            element.innerHTML = '<div style="font-size: 1.5em; font-weight: bold;">🎊 Đã đến Tết!</div>';
+        }
+    }
+
+    // ==================== DATE & TIME FUNCTIONS ====================
+    function updateCurrentDateTime() {
+        const now = new Date();
+        
+        const options = { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        };
+        const dateString = now.toLocaleDateString('vi-VN', options);
+        
+        const timeString = now.toLocaleTimeString('vi-VN', { 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit' 
+        });
+        
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const timezoneOffset = -now.getTimezoneOffset() / 60;
+        const timezoneString = `UTC${timezoneOffset >= 0 ? '+' : ''}${timezoneOffset} (${timezone})`;
+        
+        document.getElementById('current-date').textContent = dateString;
+        document.getElementById('current-time').textContent = timeString;
+        document.getElementById('timezone').textContent = timezoneString;
+    }
+
+    // ==================== LOCATION FUNCTIONS ====================
+    function getLocationInfo() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    
+                    try {
+                        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                        const data = await response.json();
                         
-                        try {
-                            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-                            const data = await response.json();
-                            
-                            const locationInfo = document.getElementById('location-info');
-                            const locationDetails = document.getElementById('location-details');
-                            
-                            let locationText = '';
-                            if (data.address) {
-                                const city = data.address.city || data.address.town || data.address.village || '';
-                                const country = data.address.country || '';
-                                locationText = `Bạn đang ở: ${city}${city && country ? ', ' : ''}${country}`;
-                            } else {
-                                locationText = `Tọa độ: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
-                            }
-                            
-                            locationDetails.textContent = locationText;
-                            locationInfo.style.display = 'block';
-                        } catch (error) {
-                            console.log('Không thể lấy thông tin vị trí chi tiết');
+                        const locationInfo = document.getElementById('location-info');
+                        const locationDetails = document.getElementById('location-details');
+                        
+                        let locationText = '';
+                        if (data.address) {
+                            const city = data.address.city || data.address.town || data.address.village || '';
+                            const country = data.address.country || '';
+                            locationText = `Bạn đang ở: ${city}${city && country ? ', ' : ''}${country}`;
+                        } else {
+                            locationText = `Tọa độ: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
                         }
-                    },
-                    (error) => {
-                        console.log('Người dùng không cho phép truy cập vị trí');
+                        
+                        locationDetails.textContent = locationText;
+                        locationInfo.style.display = 'block';
+                    } catch (error) {
+                        console.log('Không thể lấy thông tin vị trí chi tiết');
                     }
-                );
+                },
+                (error) => {
+                    console.log('Người dùng không cho phép truy cập vị trí');
+                }
+            );
+        }
+    }
+
+    // ==================== FIREWORKS FUNCTIONS ====================
+    function createAutoFireworks(solarDistance, lunarDistance) {
+        if (solarDistance < 10 * 24 * 60 * 60 * 1000 || lunarDistance < 10 * 24 * 60 * 60 * 1000) {
+            if (Math.random() < 0.1) {
+                createFirework();
             }
         }
+    }
 
-        // ==================== FIREWORKS FUNCTIONS ====================
-        function createAutoFireworks(solarDistance, lunarDistance) {
-            if (solarDistance < 10 * 24 * 60 * 60 * 1000 || lunarDistance < 10 * 24 * 60 * 60 * 1000) {
-                if (Math.random() < 0.1) {
-                    createFirework();
-                }
+    function createFirework() {
+        const firework = document.createElement('div');
+        firework.className = 'firework';
+        
+        const startX = Math.random() * window.innerWidth;
+        const startY = window.innerHeight;
+        const endX = startX + (Math.random() - 0.5) * 200;
+        const endY = startY - Math.random() * 300 - 100;
+        
+        firework.style.setProperty('--x', startX + 'px');
+        firework.style.setProperty('--y', startY + 'px');
+        firework.style.setProperty('--tx', (endX - startX) + 'px');
+        firework.style.setProperty('--ty', (endY - startY) + 'px');
+        
+        const colors = ['#ffeb3b', '#e74c3c', '#9b59b6', '#3498db', '#2ecc71'];
+        firework.style.background = colors[Math.floor(Math.random() * colors.length)];
+        
+        document.body.appendChild(firework);
+        
+        setTimeout(() => {
+            if (firework.parentNode) {
+                firework.parentNode.removeChild(firework);
             }
+        }, 1000);
+    }
+
+    // ==================== INITIALIZATION ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 Website đã khởi động!');
+        
+        // Khởi tạo
+        initializeFirebase();
+        updateCurrentDateTime();
+        updateCountdown();
+        
+        // Cập nhật thời gian mỗi giây
+        setInterval(updateCurrentDateTime, 1000);
+        setInterval(updateCountdown, 1000);
+        
+        // Lấy thông tin vị trí sau 2 giây
+        setTimeout(getLocationInfo, 2000);
+
+        // Hiển thị welcome message
+        showWelcomeMessage();
+
+        // Kiểm tra localStorage hiện tại
+        const currentEmails = debugEmailStorage();
+        console.log('📊 Email đã đăng ký:', currentEmails.length);
+    });
+
+    function showWelcomeMessage() {
+        const hour = new Date().getHours();
+        let greeting = '';
+        
+        if (hour < 12) {
+            greeting = 'Chào buổi sáng! 🌅';
+        } else if (hour < 18) {
+            greeting = 'Chào buổi chiều! ☀️';
+        } else {
+            greeting = 'Chào buổi tối! 🌙';
         }
+        
+        console.log(greeting + ' Chào mừng đến với Đếm Ngược Tết 2026!');
+    }
 
-        function createFirework() {
-            const firework = document.createElement('div');
-            firework.className = 'firework';
-            
-            const startX = Math.random() * window.innerWidth;
-            const startY = window.innerHeight;
-            const endX = startX + (Math.random() - 0.5) * 200;
-            const endY = startY - Math.random() * 300 - 100;
-            
-            firework.style.setProperty('--x', startX + 'px');
-            firework.style.setProperty('--y', startY + 'px');
-            firework.style.setProperty('--tx', (endX - startX) + 'px');
-            firework.style.setProperty('--ty', (endY - startY) + 'px');
-            
-            const colors = ['#ffeb3b', '#e74c3c', '#9b59b6', '#3498db', '#2ecc71'];
-            firework.style.background = colors[Math.floor(Math.random() * colors.length)];
-            
-            document.body.appendChild(firework);
-            
-            setTimeout(() => {
-                if (firework.parentNode) {
-                    firework.parentNode.removeChild(firework);
-                }
-            }, 1000);
-        }
+    // Hàm test để kiểm tra nhanh
+    function testEmailRegistration() {
+        const testEmail = 'test' + Date.now() + '@gmail.com';
+        document.getElementById('newsletter-email').value = testEmail;
+        console.log('🧪 Test email:', testEmail);
+    }
 
-        // ==================== INITIALIZATION ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeFirebase();
-            updateCurrentDateTime();
-            updateCountdown();
-            
-            setInterval(updateCurrentDateTime, 1000);
-            setInterval(updateCountdown, 1000);
-            
-            setTimeout(getLocationInfo, 2000);
-
-            document.addEventListener('click', function(e) {
-                for (let i = 0; i < 5; i++) {
-                    setTimeout(() => createFirework(), i * 100);
-                }
-            });
-
-            showWelcomeMessage();
-        });
-
-        function showWelcomeMessage() {
-            const hour = new Date().getHours();
-            let greeting = '';
-            
-            if (hour < 12) {
-                greeting = 'Chào buổi sáng! 🌅';
-            } else if (hour < 18) {
-                greeting = 'Chào buổi chiều! ☀️';
-            } else {
-                greeting = 'Chào buổi tối! 🌙';
-            }
-            
-            console.log(greeting + ' Chào mừng đến với Đếm Ngược Tết 2026!');
-        }
-    </script>
+    // Gọi hàm test nếu cần (bỏ comment dòng dưới)
+    // setTimeout(testEmailRegistration, 2000);
+</script>
 </body>
 </html>
